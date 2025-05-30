@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="title">Corvinus Átlag Kalkulátor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="lang-select">
+      <button onclick="setLanguage('hu')">🇭🇺 Magyar</button>
+      <button onclick="setLanguage('en')">🇬🇧 English</button>
+    </div>
+
+    <h1 data-i18n="title">Corvinus Átlag Kalkulátor</h1>
+
+    <form id="subject-form">
+      <input type="text" id="name" data-i18n-placeholder="subjectName" placeholder="Tantárgy neve" required />
+      <input type="number" id="credit" data-i18n-placeholder="credit" placeholder="Kredit" min="0" required />
+      <input type="number" id="grade" data-i18n-placeholder="grade" placeholder="Jegy (1-5)" min="1" max="5" required />
+      <label><input type="checkbox" id="mandatory" /> <span data-i18n="mandatory">Kötelező</span></label>
+      <button type="submit" data-i18n="add">Hozzáadás</button>
+    </form>
+
+    <div id="subjects-list"></div>
+    <div id="results"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
