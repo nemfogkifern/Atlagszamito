@@ -1,114 +1,210 @@
-const form = document.getElementById("subject-form");
-const subjectsList = document.getElementById("subjects-list");
-const results = document.getElementById("results");
-
-let subjects = [];
-let currentLanguage = "hu";
-
 const translations = {
   hu: {
-    title: "Corvinus Átlag Kalkulátor",
+    title: "Corvinus Átlagkalkulátor",
     subjectName: "Tantárgy neve",
-    credit: "Kredit",
-    grade: "Jegy (1-5)",
+    subjectCredit: "Kredit",
+    subjectGrade: "Jegy (1-5)",
     mandatory: "Kötelező",
-    add: "Hozzáadás",
-    subjects: "Tantárgyak",
-    weightedAverage: "Súlyozott átlag",
-    creditIndex: "Kreditindex",
-    delete: "Törlés",
-    noSubjects: "Nincs még felvett tárgy."
+    addBtn: "Hozzáadás",
+    thSubject: "Tantárgy",
+    thCredit: "Kredit",
+    thGrade: "Jegy",
+    thMandatory: "Kötelező",
+    thDelete: "Törlés",
+    resultScholarshipAvg: "Ösztöndíjátlag: ",
+    resultWeightedAvg: "Kreditekkel súlyozott tanulmányi átlag: ",
+    resultScholarshipIndex: "Ösztöndíjindex: ",
   },
   en: {
-    title: "Corvinus Grade Calculator",
-    subjectName: "Subject name",
-    credit: "Credits",
-    grade: "Grade (1-5)",
+    title: "Corvinus GPA Calculator",
+    subjectName: "Subject Name",
+    subjectCredit: "Credit",
+    subjectGrade: "Grade (1-5)",
     mandatory: "Mandatory",
-    add: "Add",
-    subjects: "Subjects",
-    weightedAverage: "Weighted average",
-    creditIndex: "Credit index",
-    delete: "Delete",
-    noSubjects: "No subjects added yet."
-  }
+    addBtn: "Add",
+    thSubject: "Subject",
+    thCredit: "Credit",
+    thGrade: "Grade",
+    thMandatory: "Mandatory",
+    thDelete: "Delete",
+    resultScholarshipAvg: "Scholarship Average: ",
+    resultWeightedAvg: "Weighted Study Average: ",
+    resultScholarshipIndex: "Scholarship Index: ",
+  },
 };
 
+let currentLang = "hu";
+
+const form = document.getElementById("subjectForm");
+const tbody = document.querySelector("#subjectsTable tbody");
+const langButtons = document.querySelectorAll(".lang-btn");
+
+const inputSubject = document.getElementById("subjectName");
+const inputCredit = document.getElementById("subjectCredit");
+const inputGrade = document.getElementById("subjectGrade");
+const inputMandatory = document.getElementById("mandatory");
+const addBtn = document.getElementById("addBtn");
+
+const resultScholarshipAvg = document.getElementById("resultScholarshipAvg");
+const resultWeightedAvg = document.getElementById("resultWeightedAvg");
+const resultScholarshipIndex = document.getElementById("resultScholarshipIndex");
+
+// Tárolt tárgyak tömbje
+let subjects = [];
+
+// --- Nyelvváltás ---
 function setLanguage(lang) {
-  currentLanguage = lang;
-  const dict = translations[lang];
+  currentLang = lang;
 
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    if (dict[key]) el.textContent = dict[key];
-  });
+  document.getElementById("title").textContent = translations[lang].title;
+  inputSubject.placeholder = translations[lang].subjectName;
+  inputCredit.placeholder = translations[lang].subjectCredit;
+  inputGrade.placeholder = translations[lang].subjectGrade;
+  document.getElementById("mandatoryLabel").textContent = translations[lang].mandatory;
+  addBtn.textContent = translations[lang].addBtn;
 
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-placeholder");
-    if (dict[key]) el.placeholder = dict[key];
-  });
+  document.getElementById("thSubject").textContent = translations[lang].thSubject;
+  document.getElementById("thCredit").textContent = translations[lang].thCredit;
+  document.getElementById("thGrade").textContent = translations[lang].thGrade;
+  document.getElementById("thMandatory").textContent = translations[lang].thMandatory;
+  document.getElementById("thDelete").textContent = translations[lang].thDelete;
 
-  renderSubjects();
-  calculateResults();
+  updateTable();
+  updateResults();
+  updateLangButtons();
 }
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+function updateLangButtons() {
+  langButtons.forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.lang === currentLang);
+  });
+}
 
-  const name = document.getElementById("name").value;
-  const credit = parseFloat(document.getElementById("credit").value);
-  const grade = parseFloat(document.getElementById("grade").value);
-  const mandatory = document.getElementById("mandatory").checked;
-
-  subjects.push({ name, credit, grade, mandatory });
-  form.reset();
-  renderSubjects();
-  calculateResults();
+langButtons.forEach((btn) => {
+  btn.addEventListener("click", () => setLanguage(btn.dataset.lang));
 });
 
-function renderSubjects() {
+// --- Táblázat frissítése ---
+function updateTable() {
+  tbody.innerHTML = "";
+
+  subjects.forEach((subj, index) => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${subj.name}</td>
+      <td>${subj.credit}</td>
+      <td>${subj.grade}</td>
+      <td>${subj.mandatory ? (currentLang === "hu" ? "Igen" : "Yes") : (currentLang === "hu" ? "Nem" : "No")}</td>
+      <td><button aria-label="${currentLang === "hu" ? "Törlés" : "Delete"}" data-index="${index}">×</button></td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  // Törlés gomb esemény
+  tbody.querySelectorAll("button").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      subjects.splice(btn.dataset.index, 1);
+      saveToCookies();
+      updateTable();
+      updateResults();
+    })
+  );
+}
+
+// --- Átlagok számítása ---
+function updateResults() {
   if (subjects.length === 0) {
-    subjectsList.innerHTML = `<p>${translations[currentLanguage].noSubjects}</p>`;
+    resultScholarshipAvg.textContent = translations[currentLang].resultScholarshipAvg + "-";
+    resultWeightedAvg.textContent = translations[currentLang].resultWeightedAvg + "-";
+    resultScholarshipIndex.textContent = translations[currentLang].resultScholarshipIndex + "-";
     return;
   }
 
-  subjectsList.innerHTML =
-    "<ul>" +
-    subjects
-      .map(
-        (s, index) => `
-    <li>
-      ${s.name} – ${s.credit} ${translations[currentLanguage].credit}, ${translations[currentLanguage].grade.toLowerCase()}: ${s.grade} ${s.mandatory ? `(${translations[currentLanguage].mandatory})` : ""}
-      <button onclick="removeSubject(${index})">${translations[currentLanguage].delete}</button>
-    </li>
-  `
-      )
-      .join("") +
-    "</ul>";
+  // Ösztöndíjátlag számítása (felvett tárgyak, bukott is beleszámít)
+  let sumScholarshipNumerator = 0;
+  let sumScholarshipDenominator = 0;
+
+  // Kreditekkel súlyozott tanulmányi átlag (teljesített tárgyak, 1-es nem számít)
+  let sumWeightedNumerator = 0;
+  let sumWeightedDenominator = 0;
+
+  // Ösztöndíjindexhez teljesített kreditek összesen (1-es nem számít)
+  let totalPassedCredits = 0;
+
+  subjects.forEach(({ credit, grade, mandatory }) => {
+    const weight = (mandatory) ? 1 : 1; // nincs 1.2 súlyozás, ahogy kértél
+    // Ösztöndíjátlag (felvett tárgyak)
+    sumScholarshipNumerator += credit * grade * weight;
+    sumScholarshipDenominator += credit * weight;
+
+    // Teljesített tárgyak (grade > 1)
+    if (grade > 1) {
+      sumWeightedNumerator += credit * grade * weight;
+      sumWeightedDenominator += credit * weight;
+      totalPassedCredits += credit;
+    }
+  });
+
+  const scholarshipAvg = sumScholarshipDenominator > 0 ? sumScholarshipNumerator / sumScholarshipDenominator : 0;
+  const weightedAvg = sumWeightedDenominator > 0 ? sumWeightedNumerator / sumWeightedDenominator : 0;
+  const scholarshipIndex = scholarshipAvg + (((totalPassedCredits / 27) - 1) / 2);
+
+  resultScholarshipAvg.textContent =
+    translations[currentLang].resultScholarshipAvg + scholarshipAvg.toFixed(2);
+  resultWeightedAvg.textContent =
+    translations[currentLang].resultWeightedAvg + weightedAvg.toFixed(2);
+  resultScholarshipIndex.textContent =
+    translations[currentLang].resultScholarshipIndex + scholarshipIndex.toFixed(2);
 }
 
-function removeSubject(index) {
-  subjects.splice(index, 1);
-  renderSubjects();
-  calculateResults();
-}
+// --- Űrlap kezelése ---
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-function calculateResults() {
-  if (subjects.length === 0) {
-    results.innerHTML = "";
+  const name = inputSubject.value.trim();
+  const credit = Number(inputCredit.value);
+  const grade = Number(inputGrade.value);
+  const mandatory = inputMandatory.checked;
+
+  if (!name || credit < 1 || credit > 30 || grade < 1 || grade > 5) {
+    alert(currentLang === "hu" ? "Kérlek töltsd ki helyesen az adatokat!" : "Please fill the data correctly!");
     return;
   }
 
-  const totalCredits = subjects.reduce((sum, s) => sum + s.credit, 0);
-  const weightedSum = subjects.reduce((sum, s) => sum + s.credit * s.grade, 0);
-  const average = (weightedSum / totalCredits).toFixed(2);
-  const index = weightedSum;
+  subjects.push({ name, credit, grade, mandatory });
 
-  results.innerHTML = `
-    ${translations[currentLanguage].weightedAverage}: ${average}<br>
-    ${translations[currentLanguage].creditIndex}: ${index}
-  `;
+  saveToCookies();
+  updateTable();
+  updateResults();
+
+  form.reset();
+  inputSubject.focus();
+});
+
+// --- Cookie-kezelés ---
+function saveToCookies() {
+  const json = JSON.stringify(subjects);
+  document.cookie = `subjects=${encodeURIComponent(json)};path=/;max-age=${60*60*24*365}`;
 }
 
-// Induláskor magyar nyelv
-setLanguage("hu");
+function loadFromCookies() {
+  const cookies = document.cookie.split(";").map(c => c.trim());
+  for (const cookie of cookies) {
+    if (cookie.startsWith("subjects=")) {
+      const json = decodeURIComponent(cookie.split("=")[1]);
+      try {
+        subjects = JSON.parse(json);
+      } catch {
+        subjects = [];
+      }
+      break;
+    }
+  }
+}
+
+loadFromCookies();
+setLanguage(currentLang);
+updateTable();
+updateResults();

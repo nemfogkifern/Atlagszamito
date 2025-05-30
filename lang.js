@@ -1,0 +1,45 @@
+// lang.js
+const texts = {
+  hu: {
+    title: "Corvinus Hallgatói Átlag Számító",
+    namePlaceholder: "Tantárgy neve",
+    creditPlaceholder: "Kredit",
+    gradePlaceholder: "Jegy (1-5)",
+    mandatoryLabel: "Kötelező / Kötelezően választható tantárgy",
+    addBtn: "Hozzáad",
+    thName: "Tantárgy",
+    thCredit: "Kredit",
+    thGrade: "Jegy",
+    thMandatory: "Kötelező",
+    thDelete: "Törlés",
+    resultsTitle: "Eredmények",
+    scholarshipAvgText: "Ösztöndíjátlag",
+    weightedAvgText: "Kreditekkel súlyozott tanulmányi átlag",
+    scholarshipIndexText: "Ösztöndíjindex",
+    deleteBtnText: "Törlés",
+    langSwitchBtn: "English",
+    yes: "Igen",
+    no: "Nem"
+  },
+  en: {
+    title: "Corvinus Student GPA Calculator",
+    namePlaceholder: "Subject Name",
+    creditPlaceholder: "Credit",
+    gradePlaceholder: "Grade (1-5)",
+    mandatoryLabel: "Mandatory / Compulsory elective subject",
+    addBtn: "Add",
+    thName: "Subject",
+    thCredit: "Credit",
+    thGrade: "Grade",
+    thMandatory: "Mandatory",
+    thDelete: "Delete",
+    resultsTitle: "Results",
+    scholarshipAvgText: "Scholarship GPA",
+    weightedAvgText: "Credit-weighted GPA",
+    scholarshipIndexText: "Scholarship Index",
+    deleteBtnText: "Delete",
+    langSwitchBtn: "Magyar",
+    yes: "Yes",
+    no: "No"
+  }
+};

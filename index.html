@@ -2,30 +2,46 @@
 <html lang="hu">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-i18n="title">Corvinus Átlag Kalkulátor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Corvinus Átlagkalkulátor</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <div class="lang-select">
-      <button onclick="setLanguage('hu')">🇭🇺 Magyar</button>
-      <button onclick="setLanguage('en')">🇬🇧 English</button>
-    </div>
+  <h1 id="title">Corvinus Átlagkalkulátor</h1>
 
-    <h1 data-i18n="title">Corvinus Átlag Kalkulátor</h1>
-
-    <form id="subject-form">
-      <input type="text" id="name" data-i18n-placeholder="subjectName" placeholder="Tantárgy neve" required />
-      <input type="number" id="credit" data-i18n-placeholder="credit" placeholder="Kredit" min="0" required />
-      <input type="number" id="grade" data-i18n-placeholder="grade" placeholder="Jegy (1-5)" min="1" max="5" required />
-      <label><input type="checkbox" id="mandatory" /> <span data-i18n="mandatory">Kötelező</span></label>
-      <button type="submit" data-i18n="add">Hozzáadás</button>
-    </form>
-
-    <div id="subjects-list"></div>
-    <div id="results"></div>
+  <div id="langButtons">
+    <button class="lang-btn active" data-lang="hu">Magyar</button>
+    <button class="lang-btn" data-lang="en">English</button>
   </div>
+
+  <form id="subjectForm">
+    <input type="text" id="subjectName" placeholder="Tantárgy neve / Subject name" required />
+    <input type="number" id="subjectCredit" placeholder="Kredit / Credit" min="1" max="30" required />
+    <input type="number" id="subjectGrade" placeholder="Jegy / Grade (1-5)" min="1" max="5" required />
+    <label for="mandatory">
+      <input type="checkbox" id="mandatory" /> <span id="mandatoryLabel">Kötelező</span>
+    </label>
+    <button type="submit" id="addBtn">Hozzáadás / Add</button>
+  </form>
+
+  <table id="subjectsTable" aria-label="Tantárgyak / Subjects">
+    <thead>
+      <tr>
+        <th id="thSubject">Tantárgy / Subject</th>
+        <th id="thCredit">Kredit / Credit</th>
+        <th id="thGrade">Jegy / Grade</th>
+        <th id="thMandatory">Kötelező / Mandatory</th>
+        <th id="thDelete">Törlés / Delete</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <section id="results" aria-live="polite" aria-atomic="true">
+    <p id="resultScholarshipAvg">Ösztöndíjátlag: -</p>
+    <p id="resultWeightedAvg">Kreditekkel súlyozott tanulmányi átlag: -</p>
+    <p id="resultScholarshipIndex">Ösztöndíjindex: -</p>
+  </section>
 
   <script src="script.js"></script>
 </body>
