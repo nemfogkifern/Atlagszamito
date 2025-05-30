@@ -91,21 +91,35 @@ function updateTable() {
 
     tr.innerHTML = `
       <td>${subj.name}</td>
-      <td>${subj.credit}</td>
       <td>
-      <span class="grade-text">${subj.grade}</span>
-      <select class="grade-select" data-index="${index}" style="display:none;">
-          ${[1, 2, 3, 4, 5].map(i => `<option value="${i}" ${i === subj.grade ? "selected" : ""}>${i}</option>`).join("")}
-      </select>
+        <span class="credit-text">${subj.credit}</span>
+        <select class="credit-select" data-index="${index}" style="display:none;">
+          ${Array.from({ length: 10 }, (_, i) => i + 1)
+            .map(i => `<option value="${i}" ${i === subj.credit ? "selected" : ""}>${i}</option>`)
+            .join("")}
+        </select>
       </td>
-
-      <td>${subj.mandatory ? (currentLang === "hu" ? "Igen" : "Yes") : (currentLang === "hu" ? "Nem" : "No")}</td>
-      <td><button aria-label="${currentLang === "hu" ? "Törlés" : "Delete"}" data-index="${index}">×</button></td>
+      <td>
+        <span class="grade-text">${subj.grade}</span>
+        <select class="grade-select" data-index="${index}" style="display:none;">
+          ${[1, 2, 3, 4, 5]
+            .map(i => `<option value="${i}" ${i === subj.grade ? "selected" : ""}>${i}</option>`)
+            .join("")}
+        </select>
+      </td>
+      <td>
+        <span class="mandatory-text">${subj.mandatory ? (currentLang === "hu" ? "Igen" : "Yes") : (currentLang === "hu" ? "Nem" : "No")}</span>
+        <input type="checkbox" class="mandatory-checkbox" data-index="${index}" style="display:none;" ${subj.mandatory ? "checked" : ""}>
+      </td>
+      <td>
+        <button data-index="${index}">🗑️</button>
+      </td>
     `;
 
     tbody.appendChild(tr);
   });
 
+  // Törlés gomb
   tbody.querySelectorAll("button").forEach((btn) =>
     btn.addEventListener("click", () => {
       subjects.splice(btn.dataset.index, 1);
@@ -114,31 +128,69 @@ function updateTable() {
       updateResults();
     })
   );
+
+  // Jegy módosítása
   tbody.querySelectorAll(".grade-text").forEach(span => {
-  span.addEventListener("click", () => {
-    const td = span.parentElement;
-    const select = td.querySelector(".grade-select");
-    span.style.display = "none";
-    select.style.display = "inline";
-  });
-});
-
-tbody.querySelectorAll(".grade-select").forEach(select => {
-  select.addEventListener("change", () => {
-    const index = parseInt(select.dataset.index);
-    const newGrade = parseInt(select.value);
-    subjects[index].grade = newGrade;
-    saveToCookies();
-    updateTable();
-    updateResults();
+    span.addEventListener("click", () => {
+      const td = span.parentElement;
+      span.style.display = "none";
+      td.querySelector(".grade-select").style.display = "inline";
+    });
   });
 
-  select.addEventListener("blur", () => {
-    updateTable(); // Elrejtjük a selectet, visszavált spanra
+  tbody.querySelectorAll(".grade-select").forEach(select => {
+    select.addEventListener("change", () => {
+      const index = parseInt(select.dataset.index);
+      subjects[index].grade = parseInt(select.value);
+      saveToCookies();
+      updateTable();
+      updateResults();
+    });
+    select.addEventListener("blur", updateTable);
   });
-});
 
+  // Kredit módosítása
+  tbody.querySelectorAll(".credit-text").forEach(span => {
+    span.addEventListener("click", () => {
+      const td = span.parentElement;
+      span.style.display = "none";
+      td.querySelector(".credit-select").style.display = "inline";
+    });
+  });
+
+  tbody.querySelectorAll(".credit-select").forEach(select => {
+    select.addEventListener("change", () => {
+      const index = parseInt(select.dataset.index);
+      subjects[index].credit = parseInt(select.value);
+      saveToCookies();
+      updateTable();
+      updateResults();
+    });
+    select.addEventListener("blur", updateTable);
+  });
+
+  // Kötelező módosítása
+  tbody.querySelectorAll(".mandatory-text").forEach(span => {
+    span.addEventListener("click", () => {
+      const td = span.parentElement;
+      span.style.display = "none";
+      const checkbox = td.querySelector(".mandatory-checkbox");
+      checkbox.style.display = "inline";
+    });
+  });
+
+  tbody.querySelectorAll(".mandatory-checkbox").forEach(checkbox => {
+    checkbox.addEventListener("change", () => {
+      const index = parseInt(checkbox.dataset.index);
+      subjects[index].mandatory = checkbox.checked;
+      saveToCookies();
+      updateTable();
+      updateResults();
+    });
+    checkbox.addEventListener("blur", updateTable);
+  });
 }
+
 
 function updateResults() {
   if (subjects.length === 0) {
