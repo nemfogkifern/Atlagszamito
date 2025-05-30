@@ -9,8 +9,8 @@ const translations = {
     thSubject: "Tantárgy",
     thCredit: "Kredit",
     thGrade: "Jegy",
-    thMandatory: "Kötelező",
-    thDelete: "Törlés",
+    thMandatory: "K",
+    thDelete: "",
     resultScholarshipAvg: "Ösztöndíjátlag: ",
     resultWeightedAvg: "Kreditekkel súlyozott tanulmányi átlag: ",
     resultScholarshipIndex: "Ösztöndíjindex: ",
@@ -25,8 +25,8 @@ const translations = {
     thSubject: "Subject",
     thCredit: "Credit",
     thGrade: "Grade",
-    thMandatory: "Mandatory",
-    thDelete: "Delete",
+    thMandatory: "M",
+    thDelete: "",
     resultScholarshipAvg: "Scholarship Average: ",
     resultWeightedAvg: "Weighted Study Average: ",
     resultScholarshipIndex: "Scholarship Index: ",
@@ -181,6 +181,9 @@ form.addEventListener("submit", (e) => {
 
   form.reset();
   inputSubject.focus();
+  if (mandatory) {
+    inputMandatory.checked = true;
+  }
 });
 
 // --- Cookie-kezelés ---
@@ -208,3 +211,76 @@ loadFromCookies();
 setLanguage(currentLang);
 updateTable();
 updateResults();
+
+//Autocomplete
+
+const autocompleteList = document.createElement("ul");
+autocompleteList.classList.add("autocomplete-list");
+inputSubject.parentNode.appendChild(autocompleteList);
+
+inputSubject.addEventListener("input", () => {
+  const value = inputSubject.value.toLowerCase();
+  autocompleteList.innerHTML = "";
+
+  if (value.length < 2) return;
+
+  const matches = subjectDatabase.filter((s) =>
+    s.name.toLowerCase().includes(value)
+  );
+
+  matches.slice(0, 5).forEach((match) => {
+    const item = document.createElement("li");
+    item.textContent = match.name;
+    item.addEventListener("click", () => {
+      inputSubject.value = match.name;
+      inputCredit.value = match.credit;
+      autocompleteList.innerHTML = "";
+    });
+    autocompleteList.appendChild(item);
+  });
+});
+
+// Elrejtés, ha máshova kattintasz
+document.addEventListener("click", (e) => {
+  if (!autocompleteList.contains(e.target) && e.target !== inputSubject) {
+    autocompleteList.innerHTML = "";
+  }
+});
+
+let subjectDatabase = [];
+
+function loadSubjectCSV() {
+  fetch("tantargyak.csv")
+    .then(response => response.text())
+    .then(csv => {
+      const lines = csv.trim().split("\n");
+      const headers = lines[0].split(",");
+
+      subjectDatabase = lines.slice(1).map(line => {
+        const values = line.split(",");
+        return {
+          name: values[0],
+          credit: parseInt(values[1]),
+          instructor: values[2],
+          language: values[3],
+          link: values[4]
+        };
+      });
+      //If there is a recor with the same name and credit, take the first one
+      subjectDatabase = subjectDatabase.reduce((acc, curr) => {
+        const existing = acc.find(s => s.name === curr.name && s.credit === curr.credit);
+        if (existing) {
+          return acc;
+        } else {
+          return [...acc, curr];
+        }
+      }, []);
+    })
+    .catch(err => {
+      console.error("Nem sikerült betölteni a tantárgylistát:", err);
+    });
+}
+
+// Betöltés induláskor
+loadSubjectCSV();
+
