@@ -1,3 +1,4 @@
+
 const translations = {
   hu: {
     title: "Corvinus Átlagkalkulátor",
@@ -49,10 +50,8 @@ const resultScholarshipAvg = document.getElementById("resultScholarshipAvg");
 const resultWeightedAvg = document.getElementById("resultWeightedAvg");
 const resultScholarshipIndex = document.getElementById("resultScholarshipIndex");
 
-// Tárolt tárgyak tömbje
 let subjects = [];
 
-// --- Nyelvváltás ---
 function setLanguage(lang) {
   currentLang = lang;
 
@@ -84,7 +83,6 @@ langButtons.forEach((btn) => {
   btn.addEventListener("click", () => setLanguage(btn.dataset.lang));
 });
 
-// --- Táblázat frissítése ---
 function updateTable() {
   tbody.innerHTML = "";
 
@@ -94,7 +92,13 @@ function updateTable() {
     tr.innerHTML = `
       <td>${subj.name}</td>
       <td>${subj.credit}</td>
-      <td>${subj.grade}</td>
+      <td>
+      <span class="grade-text">${subj.grade}</span>
+      <select class="grade-select" data-index="${index}" style="display:none;">
+          ${[1, 2, 3, 4, 5].map(i => `<option value="${i}" ${i === subj.grade ? "selected" : ""}>${i}</option>`).join("")}
+      </select>
+      </td>
+
       <td>${subj.mandatory ? (currentLang === "hu" ? "Igen" : "Yes") : (currentLang === "hu" ? "Nem" : "No")}</td>
       <td><button aria-label="${currentLang === "hu" ? "Törlés" : "Delete"}" data-index="${index}">×</button></td>
     `;
@@ -102,7 +106,6 @@ function updateTable() {
     tbody.appendChild(tr);
   });
 
-  // Törlés gomb esemény
   tbody.querySelectorAll("button").forEach((btn) =>
     btn.addEventListener("click", () => {
       subjects.splice(btn.dataset.index, 1);
@@ -111,9 +114,32 @@ function updateTable() {
       updateResults();
     })
   );
+  tbody.querySelectorAll(".grade-text").forEach(span => {
+  span.addEventListener("click", () => {
+    const td = span.parentElement;
+    const select = td.querySelector(".grade-select");
+    span.style.display = "none";
+    select.style.display = "inline";
+  });
+});
+
+tbody.querySelectorAll(".grade-select").forEach(select => {
+  select.addEventListener("change", () => {
+    const index = parseInt(select.dataset.index);
+    const newGrade = parseInt(select.value);
+    subjects[index].grade = newGrade;
+    saveToCookies();
+    updateTable();
+    updateResults();
+  });
+
+  select.addEventListener("blur", () => {
+    updateTable(); // Elrejtjük a selectet, visszavált spanra
+  });
+});
+
 }
 
-// --- Átlagok számítása ---
 function updateResults() {
   if (subjects.length === 0) {
     resultScholarshipAvg.textContent = translations[currentLang].resultScholarshipAvg + "-";
@@ -122,24 +148,19 @@ function updateResults() {
     return;
   }
 
-  // Ösztöndíjátlag számítása (felvett tárgyak, bukott is beleszámít)
   let sumScholarshipNumerator = 0;
   let sumScholarshipDenominator = 0;
 
-  // Kreditekkel súlyozott tanulmányi átlag (teljesített tárgyak, 1-es nem számít)
   let sumWeightedNumerator = 0;
   let sumWeightedDenominator = 0;
 
-  // Ösztöndíjindexhez teljesített kreditek összesen (1-es nem számít)
   let totalPassedCredits = 0;
 
   subjects.forEach(({ credit, grade, mandatory }) => {
-    const weight = (mandatory) ? 1 : 1; // nincs 1.2 súlyozás, ahogy kértél
-    // Ösztöndíjátlag (felvett tárgyak)
+    const weight = 1;
     sumScholarshipNumerator += credit * grade * weight;
     sumScholarshipDenominator += credit * weight;
 
-    // Teljesített tárgyak (grade > 1)
     if (grade > 1) {
       sumWeightedNumerator += credit * grade * weight;
       sumWeightedDenominator += credit * weight;
@@ -159,7 +180,6 @@ function updateResults() {
     translations[currentLang].resultScholarshipIndex + scholarshipIndex.toFixed(2);
 }
 
-// --- Űrlap kezelése ---
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -186,7 +206,6 @@ form.addEventListener("submit", (e) => {
   }
 });
 
-// --- Cookie-kezelés ---
 function saveToCookies() {
   const json = JSON.stringify(subjects);
   document.cookie = `subjects=${encodeURIComponent(json)};path=/;max-age=${60*60*24*365}`;
@@ -212,8 +231,6 @@ setLanguage(currentLang);
 updateTable();
 updateResults();
 
-//Autocomplete
-
 const autocompleteList = document.createElement("ul");
 autocompleteList.classList.add("autocomplete-list");
 inputSubject.parentNode.appendChild(autocompleteList);
@@ -228,7 +245,7 @@ inputSubject.addEventListener("input", () => {
     s.name.toLowerCase().includes(value)
   );
 
-  matches.slice(0, 5).forEach((match) => {
+  matches.slice(0, 10).forEach((match) => {
     const item = document.createElement("li");
     item.textContent = match.name;
     item.addEventListener("click", () => {
@@ -240,7 +257,6 @@ inputSubject.addEventListener("input", () => {
   });
 });
 
-// Elrejtés, ha máshova kattintasz
 document.addEventListener("click", (e) => {
   if (!autocompleteList.contains(e.target) && e.target !== inputSubject) {
     autocompleteList.innerHTML = "";
@@ -266,7 +282,6 @@ function loadSubjectCSV() {
           link: values[4]
         };
       });
-      //If there is a recor with the same name and credit, take the first one
       subjectDatabase = subjectDatabase.reduce((acc, curr) => {
         const existing = acc.find(s => s.name === curr.name && s.credit === curr.credit);
         if (existing) {
@@ -281,6 +296,4 @@ function loadSubjectCSV() {
     });
 }
 
-// Betöltés induláskor
 loadSubjectCSV();
-

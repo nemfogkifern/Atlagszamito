@@ -162,31 +162,65 @@ tbody button:hover {
 
 .autocomplete-list {
   position: absolute;
+  z-index: 1000;
   top: 220px;
-  margin: 1px;
-  background: white;
+  background-color: white;
   border: 1px solid #ccc;
-  z-index: 100;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
+  border-top: none;
   max-height: 150px;
   overflow-y: auto;
-}
-
-.autocomplete-list li {
-  padding: 8px;
+  width: 600px;
+  box-sizing: border-box;
+  font-size: 0.9rem;
   cursor: pointer;
+  padding-left: 0;
+  margin-top: 0;
+  list-style-type: none;
+  visibility: hidden; /* alapból ne látszódjon */
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
+/* Ha van legalább egy <li>, akkor jelenjen meg */
+.autocomplete-list li {
+  padding: 8px 10px;
+  border-top: 1px solid #eee;
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Ha van legalább egy elem, akkor a lista is látszódjon */
+.autocomplete-list li:first-child {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Ha van elem, mutassuk a listát */
+.autocomplete-list:not(:empty) {
+  visibility: visible;
+  opacity: 1;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+/* Hover effekt */
 .autocomplete-list li:hover {
   background-color: #f0f0f0;
 }
 
+
+.grade-select {
+  font-size: 1em;
+  padding: 2px;
+}
+
+
 /* Reszponzív */
 @media (max-width: 700px) {
-  form {
+  .autocomplete-list {
+      width: 100%;
+    }
+    form {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
@@ -219,5 +253,12 @@ tbody button:hover {
   }
 }
 
+
+@media (max-width: 1200px) {
+    .autocomplete-list {
+      width: 600px;
+    }
+
+}
 
 
