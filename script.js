@@ -71,7 +71,38 @@ function setLanguage(lang) {
   updateTable();
   updateResults();
   updateLangButtons();
+  updateExplanations(); // 🔁 új függvény meghívása
+
+  updateResults();
 }
+
+function updateExplanations() {
+  // Magyarázó szövegek frissítése
+  document.querySelectorAll(".explanation").forEach(el => {
+    const text = el.getAttribute(`data-${currentLang}`);
+    if (text) {
+      el.textContent = text;
+    }
+  });
+
+  // A címkék első szöveges részének frissítése, de a ▼ megtartásával
+  const updateResultText = (element, newText) => {
+    const arrow = element.querySelector(".arrow");
+    element.childNodes[0].textContent = newText; // csak az első szövegrész
+    if (!arrow) {
+      const newArrow = document.createElement("span");
+      newArrow.className = "arrow";
+      newArrow.textContent = " ▼";
+      element.appendChild(newArrow);
+    }
+  };
+
+  updateResultText(resultScholarshipAvg, translations[currentLang].resultScholarshipAvg);
+  updateResultText(resultWeightedAvg, translations[currentLang].resultWeightedAvg);
+  updateResultText(resultScholarshipIndex, translations[currentLang].resultScholarshipIndex);
+}
+
+
 
 function updateLangButtons() {
   langButtons.forEach((btn) => {
@@ -278,10 +309,7 @@ function loadFromCookies() {
   }
 }
 
-loadFromCookies();
-setLanguage(currentLang);
-updateTable();
-updateResults();
+
 
 const autocompleteList = document.createElement("ul");
 autocompleteList.classList.add("autocomplete-list");
@@ -348,4 +376,28 @@ function loadSubjectCSV() {
     });
 }
 
+// Lenyíló magyarázatok kezelése
+document.getElementById("resultWeightedAvg").addEventListener("click", () => {
+  toggleExplanation("explanationWeighted");
+});
+document.getElementById("resultScholarshipAvg").addEventListener("click", () => {
+  toggleExplanation("explanationScholarship");
+});
+document.getElementById("resultScholarshipIndex").addEventListener("click", () => {
+  toggleExplanation("explanationIndex");
+});
+
+document.querySelectorAll('.result-row').forEach(row => {
+  row.addEventListener('click', () => {
+    row.classList.toggle('open');
+  });
+});
+
+
+
 loadSubjectCSV();
+
+loadFromCookies();
+setLanguage(currentLang);
+updateTable();
+updateResults();

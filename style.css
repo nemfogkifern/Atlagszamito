@@ -82,6 +82,7 @@ form label {
   gap: 8px;
   color: #1c213c;
   font-weight: 600;
+  font-size: 20px;
   flex: 1 1 120px;
   user-select: none;
 }
@@ -214,11 +215,63 @@ tbody button:hover {
   padding: 2px;
 }
 
+.result-row {
+  margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.expandable {
+  cursor: pointer;
+  padding: 10px;
+  margin: 0;
+  background-color: #f9f9f9;
+  color: #003865;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.result-row:hover .expandable {
+  background-color: #e1ecf4;
+}
+
+.arrow {
+  transition: transform 0.3s ease;
+  color: #000000;
+  user-select: none;
+}
+
+.result-row.open .arrow {
+  transform: rotate(180deg);
+}
+
+.explanation {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  padding: 0 10px;
+  font-size: 0.9em;
+  color: #333;
+  background-color: #f2f2f2;
+  border-left: 4px solid #003865;
+  margin-top: 0;
+  border-radius: 0 0 5px 5px;
+}
+
+.result-row.open .explanation {
+  max-height: 200px; /* elég nagy érték legyen, hogy kiférjen a szöveg */
+  opacity: 1;
+  padding: 10px;
+}
+
 
 /* Reszponzív */
 @media (max-width: 700px) {
   .autocomplete-list {
-      width: 100%;
+      width:97%;
     }
     form {
     flex-direction: column;
@@ -254,11 +307,6 @@ tbody button:hover {
 }
 
 
-@media (max-width: 1200px) {
-    .autocomplete-list {
-      width: 600px;
-    }
 
-}
 
 

@@ -38,10 +38,38 @@
   </table>
 
   <section id="results" aria-live="polite" aria-atomic="true">
-    <p id="resultWeightedAvg">Kreditekkel súlyozott tanulmányi átlag: -</p>
-    <p id="resultScholarshipAvg">Ösztöndíjátlag: -</p>
-    <p id="resultScholarshipIndex">Ösztöndíjindex: -</p>
-  </section>
+  <div class="result-row" data-target="explanationWeighted">
+    <p id="resultWeightedAvg" class="expandable">
+      Kreditekkel súlyozott tanulmányi átlag: - <span class="arrow">▼</span>
+    </p>
+    <div class="explanation" id="explanationWeighted"
+         data-hu="Ez az átlag csak az elégtelen (1-es) osztályzatnál jobb jegyeket veszi figyelembe. A kreditekkel súlyozva számítjuk ki: (összjegy * kredit) / összkredit. Használják például diplomaszámításhoz."
+         data-en="This average only considers grades better than failing (1). It is calculated as (grade × credit) / total credit. Used for degree qualification.">
+    </div>
+  </div>
+
+  <div class="result-row" data-target="explanationScholarship">
+    <p id="resultScholarshipAvg" class="expandable">
+      Ösztöndíjátlag: - <span class="arrow">▼</span>
+    </p>
+    <div class="explanation" id="explanationScholarship"
+         data-hu="Minden tantárgyat figyelembe vesz, még az 1-eseket is. A súlyozás azonos a kreditértékkel. Ez alapján számítják ki az ösztöndíjakat."
+         data-en="All subjects are counted, including failed ones. Weighted by credit value. It is used to determine scholarship eligibility.">
+    </div>
+  </div>
+
+  <div class="result-row" data-target="explanationIndex">
+    <p id="resultScholarshipIndex" class="expandable">
+      Ösztöndíjindex: - <span class="arrow">▼</span>
+    </p>
+    <div class="explanation" id="explanationIndex"
+         data-hu="A következőképpen számoljuk: ösztöndíjátlag + ((teljesített kreditek / 27) - 1) / 2. Az ösztöndíjak kiosztásánál fontos mérőszám."
+         data-en="Calculated as: scholarship average + ((completed credits / 27) - 1) / 2. It is an important metric for scholarship ranking.">
+    </div>
+  </div>
+</section>
+
+
 
   <script src="script.js"></script>
 </body>
