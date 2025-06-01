@@ -6,8 +6,8 @@
 body {
   margin: 0;
   font-family: 'Open Sans', Arial, sans-serif;
-  background-color: #f2f2f2;
-  color: #1c213c;
+  background-color: #fefaf6;
+  color: #002147;
   line-height: 1.6;
   padding: 8px;
 }
@@ -16,7 +16,7 @@ h1 {
   font-weight: 700;
   text-align: center;
   margin-bottom: 25px;
-  color: #1c213c;
+  color: #002147;
   user-select: none;
 }
 
@@ -29,7 +29,7 @@ h1 {
 }
 
 .lang-btn {
-  background-color: #1c213c;
+  background-color: #002147;
   color: #ffffff;
   border: none;
   padding: 10px 28px;
@@ -38,17 +38,17 @@ h1 {
   cursor: pointer;
   transition: background-color 0.25s ease, transform 0.15s ease;
   font-size: 1rem;
-  box-shadow: 0 3px 8px rgba(0, 51, 102, 0.3);
+  box-shadow: 0 3px 8px rgba(0, 33, 71, 0.3);
 }
 
 .lang-btn:hover:not(.active) {
-  background-color: #3a447f;
+  background-color: #a26a2b;
   transform: scale(1.1);
 }
 
 .lang-btn.active {
-  background-color: #0070c0;
-  box-shadow: 0 5px 15px rgba(0, 112, 192, 0.7);
+  background-color: #c38743;
+  box-shadow: 0 5px 15px rgba(195, 135, 67, 0.7);
 }
 
 form {
@@ -65,14 +65,14 @@ form input[type="number"] {
   flex: 1 1 140px;
   padding: 10px 15px;
   font-size: 1rem;
-  border: 2px solid #1c213c;
+  border: 2px solid #002147;
   border-radius: 5px;
   transition: border-color 0.25s ease;
 }
 
 form input[type="text"]:focus,
 form input[type="number"]:focus {
-  border-color: #0070c0;
+  border-color: #c38743;
   outline: none;
 }
 
@@ -80,7 +80,7 @@ form label {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #1c213c;
+  color: #002147;
   font-weight: 600;
   font-size: 20px;
   flex: 1 1 120px;
@@ -88,7 +88,7 @@ form label {
 }
 
 form button {
-  background-color: #0070c0;
+  background-color: #c38743;
   border: none;
   color: white;
   padding: 12px 35px;
@@ -98,11 +98,11 @@ form button {
   cursor: pointer;
   flex: 1 1 120px;
   transition: background-color 0.3s ease, transform 0.15s ease;
-  box-shadow: 0 4px 10px rgba(0, 112, 192, 0.6);
+  box-shadow: 0 4px 10px rgba(195, 135, 67, 0.6);
 }
 
 form button:hover {
-  background-color: #3a447f;
+  background-color: #a26a2b;
   transform: scale(1.05);
 }
 
@@ -114,11 +114,11 @@ table {
   background: white;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(0, 51, 102, 0.25);
+  box-shadow: 0 6px 18px rgba(0, 33, 71, 0.25);
 }
 
 thead {
-  background-color: #1c213c;
+  background-color: #002147;
   color: #fff;
   font-weight: 700;
 }
@@ -130,7 +130,7 @@ th, td {
 }
 
 tbody tr:hover {
-  background-color: #e6cfb0;
+  background-color: #f3e8d3;
 }
 
 tbody button {
@@ -151,14 +151,14 @@ tbody button:hover {
 #results {
   max-width: 600px;
   margin: 0 auto;
-  background-color: #1c213c;
+  background-color: #002147;
   color: #fff;
   padding: 25px 20px;
   border-radius: 10px;
   font-size: 1.25rem;
   font-weight: 700;
   text-align: center;
-  box-shadow: 0 6px 18px rgba(0, 51, 102, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 33, 71, 0.4);
 }
 
 .autocomplete-list {
@@ -206,7 +206,7 @@ tbody button:hover {
 
 /* Hover effekt */
 .autocomplete-list li:hover {
-  background-color: #f0f0f0;
+  background-color: #f8eee1;
 }
 
 
@@ -225,8 +225,8 @@ tbody button:hover {
   cursor: pointer;
   padding: 10px;
   margin: 0;
-  background-color: #f9f9f9;
-  color: #003865;
+  background-color: #fdf8f3;
+  color: #002147;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -234,7 +234,7 @@ tbody button:hover {
 }
 
 .result-row:hover .expandable {
-  background-color: #e1ecf4;
+  background-color: #f2e4cc;
 }
 
 .arrow {
@@ -254,9 +254,9 @@ tbody button:hover {
   transition: max-height 0.4s ease, opacity 0.4s ease;
   padding: 0 10px;
   font-size: 0.9em;
-  color: #333;
-  background-color: #f2f2f2;
-  border-left: 4px solid #003865;
+  color: #444444;
+  background-color: #fefaf6;
+  border-left: 4px solid #002147;
   margin-top: 0;
   border-radius: 0 0 5px 5px;
 }
@@ -314,4 +314,35 @@ tbody button:hover {
 
 
 
+/* Sor animációk */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    height: auto;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(50px);
+    height: 0;
+  }
+}
+
+tr.added-row {
+  animation: fadeIn 0.4s ease;
+}
+
+tr.removed-row {
+  animation: fadeOut 0.3s ease forwards;
+}
