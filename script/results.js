@@ -19,13 +19,16 @@ export function updateResults() {
   let sumWeightedDenominator = 0;
   let totalPassedCredits = 0;
 
-  subjects.forEach(({ credit, grade }) => {
-    sumScholarshipNumerator += credit * grade;
-    sumScholarshipDenominator += credit;
+  subjects.forEach(({ credit, grade, mandatory }) => {
+    const weight = mandatory ? 1.2 : 1.0;
+
+    sumScholarshipNumerator += weight * credit * grade;
+    sumScholarshipDenominator += weight * credit;
+
     if (grade > 1) {
-      sumWeightedNumerator += credit * grade;
-      sumWeightedDenominator += credit;
-      totalPassedCredits += credit;
+      sumWeightedNumerator += weight * credit * grade;
+      sumWeightedDenominator += weight * credit;
+      totalPassedCredits += credit; // Az indexnél a hivatalos kredit kell, nem súlyozva!
     }
   });
 
